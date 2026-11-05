@@ -11,9 +11,18 @@ class NavigationRoutes {
   static final Map<String, Widget Function(RouteSettings settings)> routes = {
     Routes.splash: (_) => const SplashScreen(),
     Routes.home: (_) => const HomeScreen(),
-    Routes.scanner: (_) => ScannerScreen(),
-    Routes.addProduct:(settings )=> AddProductScreen(item: settings.arguments != null ? settings.arguments as Item : null,),
-    Routes.detailProduct:(settings)=> DetailProductScreen(item: settings.arguments as Item,),
+    Routes.scanner: (settings) => ScannerScreen(
+      isAddingItem: settings.arguments != null
+          ? settings.arguments as bool
+          : true,
+    ),
+    Routes.addProduct: (settings) => AddProductScreen(
+      item: settings.arguments != null ? settings.arguments as Item : null,
+    ),
+    Routes.detailProduct: (settings) => DetailProductScreen(
+      item: settings.arguments as Item,
+    ),
+    
   };
 
   Route<dynamic> generateRoute(RouteSettings settings) {

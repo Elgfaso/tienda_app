@@ -15,7 +15,7 @@ class AppTextStyle {
   static TextStyle get  titleAppBar{
     return GoogleFonts.nunito(
       color: Colors.white,
-      fontSize: 18,
+      fontSize: 24,
       fontWeight: FontWeight.bold
     );
   }

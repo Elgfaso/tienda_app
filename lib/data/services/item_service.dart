@@ -47,6 +47,59 @@ class ItemService {
     );
   }
 
+  Future<List<Item>?> saveItemsFromImport(List<Item> itemsImported) async {
+    final Map<String, Item> localMap = {
+      for (var i in _items)
+        '${i.name.trim().replaceAll(' ', '_').toLowerCase()}${i.barcode.trim()}': i,
+    };
+
+    final List<Item> conflicts = [];
+    final List<Item> newItems = [];
+
+    for (var imported in itemsImported) {
+      if (localMap.containsKey(
+        '${imported.name.trim().replaceAll(' ', '_').toLowerCase()}${imported.barcode.trim()}',
+      )) {
+        conflicts.add(imported);
+      } else {
+        newItems.add(imported);
+      }
+    }
+    _items.addAll(newItems);
+    _preferencesService.savePrefs(
+      itemsKey,
+      jsonEncode(
+        _items.map((e) => e.toJson()).toList(),
+      ),
+    );
+
+    return conflicts.isNotEmpty ? conflicts : null;
+  }
+
+  Future<void> saveItemsFromImportAfterConflicts(
+    List<Item> conflictItems,
+  ) async {
+    final Map<String, Item> localMap = {
+      for (var i in _items)
+        '${i.name.trim().replaceAll(' ', '_').toLowerCase()}${i.barcode.trim()}': i,
+    };
+
+    for (var conflict in conflictItems) {
+      localMap['${conflict.name.trim().replaceAll(' ', '_').toLowerCase()}${conflict.barcode.trim()}'] = conflict;
+    }
+
+    final listForSave = localMap.values.toList();
+
+    _items = listForSave;
+
+    _preferencesService.savePrefs(
+      itemsKey,
+      jsonEncode(
+        _items.map((e) => e.toJson()).toList(),
+      ),
+    );
+  }
+
   Future<void> deleteItem(int id) async {
     final index = _items.indexWhere((e) => e.id == id);
 

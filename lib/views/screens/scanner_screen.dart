@@ -1,3 +1,5 @@
+
+import 'package:barcode_widget/barcode_widget.dart' as BC;
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
@@ -7,17 +9,15 @@ import '../global/utils/dimens.dart';
 import '../global/widgets/local_button.dart';
 
 class ScannerScreen extends StatefulWidget {
-  const ScannerScreen({super.key});
-
+  const ScannerScreen({super.key, this.isAddingItem = false});
+  final bool isAddingItem;
   @override
   State<ScannerScreen> createState() => _ScannerScreenState();
 }
 
 class _ScannerScreenState extends State<ScannerScreen> {
   Barcode? barcode;
-  Barcode? barcode2;
-  Barcode? barcode3;
-  bool allBarcodes = false;
+
   final MobileScannerController _controller = MobileScannerController(
     facing: CameraFacing.back,
     detectionSpeed: DetectionSpeed.noDuplicates,
@@ -58,48 +58,21 @@ class _ScannerScreenState extends State<ScannerScreen> {
                       children: [
                         SizedBox(
                           width: double.infinity,
-                          height: 250,
+                          height: MediaQuery.of(context).size.height * .30,
                           child: ClipRRect(
                             borderRadius: BorderRadiusGeometry.circular(15),
                             child: MobileScanner(
                               controller: _controller,
                               onDetect: (barcodes) async {
-                                await _controller.stop();
-                                if (context.mounted) {
+                                if (widget.isAddingItem) {
+                                  await _controller.stop();
+                                  barcode = barcodes.barcodes.first;
+                                } else {
                                   Navigator.pop(
                                     context,
                                     barcodes.barcodes.first,
                                   );
                                 }
-                                //if (barcode == null) {
-                                //  barcode = barcodes.barcodes.first;
-                                //} else if (barcode2 == null) {
-                                //  barcode2 = barcodes.barcodes.first;
-                                //} else if (barcode3 == null) {
-                                //  barcode3 = barcodes.barcodes.first;
-                                //  allBarcodes = true;
-                                //}
-
-                                //if (allBarcodes) {
-                                //  if (barcode?.rawValue == barcode2?.rawValue &&
-                                //      barcode2?.rawValue ==
-                                //          barcode3?.rawValue) {
-                                //    allBarcodes = false;
-                                //    await _controller.stop();
-                                //    if (context.mounted) {
-                                //      Navigator.pop(
-                                //        context,
-                                //        barcode,
-                                //      );
-                                //    }
-                                //  } else {
-                                //    allBarcodes = false;
-                                //    barcode = null;
-                                //    barcode2 = null;
-                                //    barcode3 = null;
-
-                                //  }
-                                //}
 
                                 setState(() {});
                               },
@@ -108,7 +81,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
                         ),
                         Container(
                           width: double.infinity,
-                          height: 250,
+                          height: MediaQuery.of(context).size.height * .30,
                           decoration: BoxDecoration(
                             border: Border.all(
                               color: AppColors.primaryColor,
@@ -119,6 +92,62 @@ class _ScannerScreenState extends State<ScannerScreen> {
                         ),
                       ],
                     ),
+                    VerticalSpace.veryLarge,
+                    if (barcode != null)
+                      Column(
+                        children: [
+                          Text(
+                            '¿El código es correcto?',
+                            style: AppTextStyle.label(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          VerticalSpace.normal,
+                          Center(
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width * .8,
+                              height: MediaQuery.of(context).size.width * .3,
+                              child: BC.BarcodeWidget(
+                                data: barcode!.rawValue ?? '',
+                                barcode: BC.Barcode.code128(),
+                                style: AppTextStyle.label(fontSize: 24),
+                                errorBuilder: (context, error) {
+                                  return Text('Error al mostrar el código');
+                                },
+                              ),
+                            ),
+                          ),
+                          VerticalSpace.normal,
+                          Row(
+                            children: [
+                              Expanded(
+                                child: LocalButton(
+                                  'Reintentar',
+                                  bordered: true,
+                                  onTap: () async {
+                                    barcode = null;
+                                    await _controller.start();
+                                    setState(() {});
+                                  },
+                                ),
+                              ),
+                              HorizontalSpace.half,
+                              Expanded(
+                                child: LocalButton(
+                                  'Si',
+                                  onTap: () {
+                                    Navigator.pop(
+                                      context,
+                                      barcode,
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                   ],
                 ),
               ),

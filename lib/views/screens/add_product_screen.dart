@@ -17,8 +17,6 @@ import '../global/widgets/local_input_field.dart';
 import '../routes/routes.dart';
 import 'package:path/path.dart' as path;
 
-import 'home_screen.dart';
-
 class AddProductScreen extends StatefulWidget {
   const AddProductScreen({super.key, this.item});
   final Item? item;
@@ -78,307 +76,313 @@ class _AddProductScreenState extends State<AddProductScreen> {
             style: AppTextStyle.titleAppBar,
           ),
         ),
-        body: Padding(
-          padding: EdgeInsetsGeometry.symmetric(
-            horizontal: hSpaceNormal,
-            vertical: wSpaceNormal,
-          ),
-          child: Column(
-            children: [
-              Expanded(
-                child: Form(
-                  key: _formKey,
-                  child: ListView(
-                    children: [
-                      LocalTextInputField(
-                        controller: _nameController,
-                        label: 'Nombre',
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Introduzca el nombre';
-                          }
-                          return null;
-                        },
-                      ),
-                      VerticalSpace.normal,
-                      LocalTextInputField(
-                        controller: _priceController,
-                        label: 'Precio',
-                        inputType: TextInputType.number,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Introduzca el precio';
-                          }
-      
-                          final number = double.tryParse(value);
-                          if (number == null) {
-                            return 'El precio debe ser un número';
-                          }
-                          return null;
-                        },
-                      ),
-                      VerticalSpace.large,
-      
-                      Text(
-                        '*Campos opcionales',
-                        style: AppTextStyle.label(fontSize: 20),
-                      ),
-                      VerticalSpace.half,
-                      Text(
-                        'Código',
-                        style: AppTextStyle.label(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
+        body: SafeArea(
+          child: Padding(
+            padding: EdgeInsetsGeometry.symmetric(
+              horizontal: hSpaceNormal,
+              vertical: wSpaceNormal,
+            ),
+            child: Column(
+              children: [
+                Expanded(
+                  child: Form(
+                    key: _formKey,
+                    child: ListView(
+                      children: [
+                        LocalTextInputField(
+                          controller: _nameController,
+                          textCapitalization: TextCapitalization.sentences,
+                          label: 'Nombre',
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Introduzca el nombre';
+                            }
+                            return null;
+                          },
                         ),
-                      ),
-                      Row(
-                        //crossAxisAlignment: CrossAxisAlignment.end,
-                        //mainAxisAlignment: MainAxisAlignment.center,
-                        //mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Expanded(
-                            child: LocalTextInputField(
-                              controller: _barcodeController,
-                              hint: 'Código',
-                              //label: 'Código',
-                            ),
-                          ),
-                          HorizontalSpace.half,
-                          GestureDetector(
-                            onTap: () async {
-                              final result = await Navigator.pushNamed(
-                                context,
-                                Routes.scanner,
-                              );
-      
-                              if (result != null && result is Barcode) {
-                                setState(() {
-                                  _barcodeController.text =
-                                      result.rawValue ?? '';
-                                });
-                              }
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: AppColors.primaryColor,
-                              ),
-      
-                              child: Icon(
-                                Icons.barcode_reader,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      VerticalSpace.normal,
-                      //LocalTextInputField(
-                      //  controller: _descriptionController,
-                      //  label: 'Descripción',
-                      //),
-      
-                      //VerticalSpace.normal,
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Imágen',
+                        VerticalSpace.normal,
+                        LocalTextInputField(
+                          controller: _priceController,
+                          label: 'Precio',
+                          inputType: TextInputType.number,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Introduzca el precio';
+                            }
+                
+                            final number = double.tryParse(value);
+                            if (number == null) {
+                              return 'El precio debe ser un número';
+                            }
+                            if(number == 0){
+                              return 'El precio no puede ser cero';
+                            }
+                            return null;
+                          },
+                        ),
+                        VerticalSpace.large,
+                
+                        Text(
+                          '*Campos opcionales',
+                          style: AppTextStyle.label(fontSize: 20),
+                        ),
+                        VerticalSpace.half,
+                        Text(
+                          'Código',
                           style: AppTextStyle.label(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          if (_isEdit && _previusImg == _image?.path) {
-                            locator<DialogService>().showConfirm(
-                              title: 'Aviso',
-                              message: 'Se eliminara la imágen previa',
-                              onConfirmPressed: () async {
-                                final result = await locator<ItemService>()
-                                    .deleteProductImage(
-                                      widget.item!.image,
-                                    );
-                                if (result) {
-                                  final newItem = widget.item!.copyWith(
-                                    image: '',
-                                  );
-                                  await locator<ItemService>().updateItem(
-                                    newItem,
-                                  );
+                        Row(
+                          //crossAxisAlignment: CrossAxisAlignment.end,
+                          //mainAxisAlignment: MainAxisAlignment.center,
+                          //mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Expanded(
+                              child: LocalTextInputField(
+                                controller: _barcodeController,
+                                hint: 'Código',
+                                //label: 'Código',
+                              ),
+                            ),
+                            HorizontalSpace.half,
+                            GestureDetector(
+                              onTap: () async {
+                                final result = await Navigator.pushNamed(
+                                  context,
+                                  Routes.scanner,
+                                );
+                
+                                if (result != null && result is Barcode) {
                                   setState(() {
-                                    _image = null;
+                                    _barcodeController.text =
+                                        result.rawValue ?? '';
                                   });
-                                  _modalBottomMenu();
-                                } else {
-                                  Future.delayed(
-                                    Duration(milliseconds: 200),
-                                    () {
-                                      locator<DialogService>().showAlert(
-                                        title: 'Error',
-                                        message:
-                                            'Error al eliminar la imágen',
-                                      );
-                                    },
-                                  );
                                 }
                               },
-                            );
-                          } else {
-                            _modalBottomMenu();
-                          }
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryColor,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              width: 1,
-                              color: AppColors.textColor,
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.image,
-                                color: Colors.white,
-                              ),
-                              Text(
-                                'Seleccionar imágen',
-                                style: AppTextStyle.label(
+                              child: Container(
+                                padding: EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: AppColors.primaryColor,
+                                ),
+                
+                                child: Icon(
+                                  Icons.barcode_reader,
                                   color: Colors.white,
-                                  fontSize: 20,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      VerticalSpace.normal,
-                      if (_image != null)
-                        Stack(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 12.0),
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: Container(
-                                  width: 250,
-                                  height: 220,
-                                  padding: EdgeInsets.all(2),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.primaryColor,
-                                    border: Border.all(
-                                      color: AppColors.primaryColor,
-                                      width: 4,
-                                    ),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius:
-                                        BorderRadiusGeometry.circular(
-                                          10,
-                                        ),
-                                    child: Image.file(
-                                      _image!,
-                                      fit: BoxFit.fill,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                            return const Text(
-                                              'Error al cargar la imágen',
-                                            );
-                                          },
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-      
-                            Positioned(
-                              top: 0,
-                              right: 0,
-                              child: GestureDetector(
-                                onTap: () {
-                                  if (_isEdit &&
-                                      _previusImg == _image?.path) {
-                                    locator<DialogService>().showConfirm(
-                                      title: 'Eliminar imágen',
-                                      message:
-                                          'Se eliminara la imágen, esta acción no puede revertirse',
-                                      onConfirmPressed: () async {
-                                        final result =
-                                            await locator<ItemService>()
-                                                .deleteProductImage(
-                                                  widget.item!.image,
-                                                );
-                                        if (result) {
-                                          final newItem = widget.item!
-                                              .copyWith(
-                                                image: '',
-                                              );
-                                          await locator<ItemService>()
-                                              .updateItem(newItem);
-                                          setState(() {
-                                            _image = null;
-                                          });
-                                        } else {
-                                          Future.delayed(
-                                            Duration(milliseconds: 200),
-                                            () {
-                                              locator<DialogService>().showAlert(
-                                                title: 'Error',
-                                                message:
-                                                    'Error al eliminar la imágen',
-                                              );
-                                            },
-                                          );
-                                        }
-                                      },
-                                    );
-                                  } else {
-                                    setState(() {
-                                      _image = null;
-                                    });
-                                  }
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.all(4),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.errorColor,
-                                    shape: BoxShape.circle,
-                                    //borderRadius: BorderRadius.circular(15)
-                                  ),
-      
-                                  child: Icon(
-                                    Icons.remove,
-                                    color: AppColors.backgroundColor,
-                                  ),
                                 ),
                               ),
                             ),
                           ],
                         ),
-                    ],
+                        VerticalSpace.normal,
+                        //LocalTextInputField(
+                        //  controller: _descriptionController,
+                        //  label: 'Descripción',
+                        //),
+                
+                        //VerticalSpace.normal,
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Imágen',
+                            style: AppTextStyle.label(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            if (_isEdit && _previusImg == _image?.path) {
+                              locator<DialogService>().showConfirm(
+                                title: 'Aviso',
+                                message: 'Se eliminara la imágen previa',
+                                onConfirmPressed: () async {
+                                  final result = await locator<ItemService>()
+                                      .deleteProductImage(
+                                        widget.item!.image,
+                                      );
+                                  if (result) {
+                                    final newItem = widget.item!.copyWith(
+                                      image: '',
+                                    );
+                                    await locator<ItemService>().updateItem(
+                                      newItem,
+                                    );
+                                    setState(() {
+                                      _image = null;
+                                    });
+                                    _modalBottomMenu();
+                                  } else {
+                                    Future.delayed(
+                                      Duration(milliseconds: 200),
+                                      () {
+                                        locator<DialogService>().showAlert(
+                                          title: 'Error',
+                                          message:
+                                              'Error al eliminar la imágen',
+                                        );
+                                      },
+                                    );
+                                  }
+                                },
+                              );
+                            } else {
+                              _modalBottomMenu();
+                            }
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryColor,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                width: 1,
+                                color: AppColors.textColor,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.image,
+                                  color: Colors.white,
+                                ),
+                                Text(
+                                  'Seleccionar imágen',
+                                  style: AppTextStyle.label(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        VerticalSpace.normal,
+                        if (_image != null)
+                          Stack(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 12.0),
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: Container(
+                                    width: 250,
+                                    height: 220,
+                                    padding: EdgeInsets.all(2),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primaryColor,
+                                      border: Border.all(
+                                        color: AppColors.primaryColor,
+                                        width: 4,
+                                      ),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius:
+                                          BorderRadiusGeometry.circular(
+                                            10,
+                                          ),
+                                      child: Image.file(
+                                        _image!,
+                                        fit: BoxFit.fill,
+                                        errorBuilder:
+                                            (context, error, stackTrace) {
+                                              return const Text(
+                                                'Error al cargar la imágen',
+                                              );
+                                            },
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                
+                              Positioned(
+                                top: 0,
+                                right: 0,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    if (_isEdit &&
+                                        _previusImg == _image?.path) {
+                                      locator<DialogService>().showConfirm(
+                                        title: 'Eliminar imágen',
+                                        message:
+                                            'Se eliminara la imágen, esta acción no puede revertirse',
+                                        onConfirmPressed: () async {
+                                          final result =
+                                              await locator<ItemService>()
+                                                  .deleteProductImage(
+                                                    widget.item!.image,
+                                                  );
+                                          if (result) {
+                                            final newItem = widget.item!
+                                                .copyWith(
+                                                  image: '',
+                                                );
+                                            await locator<ItemService>()
+                                                .updateItem(newItem);
+                                            setState(() {
+                                              _image = null;
+                                            });
+                                          } else {
+                                            Future.delayed(
+                                              Duration(milliseconds: 200),
+                                              () {
+                                                locator<DialogService>().showAlert(
+                                                  title: 'Error',
+                                                  message:
+                                                      'Error al eliminar la imágen',
+                                                );
+                                              },
+                                            );
+                                          }
+                                        },
+                                      );
+                                    } else {
+                                      setState(() {
+                                        _image = null;
+                                      });
+                                    }
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(4),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.errorColor,
+                                      shape: BoxShape.circle,
+                                      //borderRadius: BorderRadius.circular(15)
+                                    ),
+                
+                                    child: Icon(
+                                      Icons.remove,
+                                      color: AppColors.backgroundColor,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-      
-              LocalButton(
-                _isEdit ? 'Editar' : 'Agregar',
-                onTap: () {
-                  if (_formKey.currentState!.validate()) {
-                    if (_isEdit) {
-                      _editItem();
-                    } else {
-                      _saveItem();
+                
+                LocalButton(
+                  _isEdit ? 'Editar' : 'Agregar',
+                  onTap: () {
+                    if (_formKey.currentState!.validate()) {
+                      if (_isEdit) {
+                        _editItem();
+                      } else {
+                        _saveItem();
+                      }
                     }
-                  }
-                },
-              ),
-            ],
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

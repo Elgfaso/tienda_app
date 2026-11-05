@@ -15,7 +15,7 @@ class LocalTextInputField extends StatelessWidget {
     this.textInputAction = TextInputAction.next,
     this.hint,
     this.validator,
-    this.onChanged,
+    this.onChanged,  this.textCapitalization,
   });
   final TextEditingController? controller;
   final TextInputType inputType;
@@ -24,6 +24,7 @@ class LocalTextInputField extends StatelessWidget {
   final String? label;
   final String? hint;
   final TextInputAction textInputAction;
+  final TextCapitalization? textCapitalization;
 
   final void Function()? onEditingComplete;
   final String? Function(String? value)? validator;
@@ -54,6 +55,7 @@ class LocalTextInputField extends StatelessWidget {
           validator: validator,
           onEditingComplete: onEditingComplete,
           textInputAction: textInputAction,
+          textCapitalization: textCapitalization ?? TextCapitalization.none,
           decoration: InputDecoration(
             prefixIcon: icon,
             prefixIconConstraints: const BoxConstraints(

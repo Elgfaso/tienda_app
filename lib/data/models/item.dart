@@ -93,10 +93,10 @@ class Item {
 
   String priceFormatter() {
     // Opción A: Con símbolo $ y 2 decimales estándar
-    final formatter = NumberFormat.currency(
-      symbol: '\$', // Símbolo de moneda
-      decimalDigits: 2, // Cantidad de decimales
-    );
+    //final formatter = NumberFormat.currency(
+    //  symbol: '\$', // Símbolo de moneda
+    //  decimalDigits: 2, // Cantidad de decimales
+    //);
 
 
     // Opción B: Formato según localización (ej. México/Latinoamérica)
