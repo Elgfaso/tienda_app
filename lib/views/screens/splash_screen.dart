@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../config/locator.dart';
+import '../../data/services/audio_service.dart';
 import '../../data/services/item_service.dart';
 import '../global/app_colors.dart';
 import '../global/app_text_style.dart';
@@ -17,13 +18,16 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+
+    AudioService.playAudio(AudioNames.splash);
     Future.delayed(
       Duration(seconds: 2),
-      () {
+      () async {
         if (mounted) {
-          locator<ItemService>().init();
-
-          Navigator.pushReplacementNamed(context, Routes.home);
+          await locator<ItemService>().init();
+          if (mounted) {
+            Navigator.pushReplacementNamed(context, Routes.home);
+          }
         }
       },
     );
@@ -40,11 +44,14 @@ class _SplashScreenState extends State<SplashScreen> {
               'assets/icon_app/icon_tienda_app.jpg',
               width: MediaQuery.of(context).size.width * .70,
             ),
-            //CircularProgressIndicator(),
-            LocalTextAnimation(
+            CircularProgressIndicator(
+              color: AppColors.secondColor,
+            ),
+            Text(
+              'Cargando',
               style: AppTextStyle.label(
-                fontSize: 30,
-                color: AppColors.textColor,
+                fontSize: 26,
+                color: AppColors.secondColor,
               ),
             ),
           ],

@@ -7,6 +7,7 @@ environment:
   sdk: ^3.11.5
 
 dependencies:
+  audioplayers: ^6.8.1
   barcode_widget: ^2.0.4
   collection: ^1.19.1
   file_picker: ^13.1.0
@@ -33,6 +34,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/icon_app/
+    - assets/audios/
 
 
 flutter_launcher_icons:

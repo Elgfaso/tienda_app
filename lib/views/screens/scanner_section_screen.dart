@@ -7,6 +7,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../config/locator.dart';
 import '../../data/models/item.dart';
+import '../../data/services/audio_service.dart';
 import '../../data/services/item_service.dart';
 import '../global/app_colors.dart';
 import '../global/app_text_style.dart';
@@ -63,6 +64,7 @@ class _ScannerSectionScreenState extends State<ScannerSectionScreen> {
                         child: MobileScanner(
                           controller: _controller,
                           onDetect: (barcodes) async {
+                            AudioService.playAudio(AudioNames.scanned);
                             //if (widget.isAddingItem) {
                             //  await _controller.stop();
                             //  barcode = barcodes.barcodes.first;

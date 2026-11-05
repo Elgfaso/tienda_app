@@ -1,8 +1,8 @@
-
 import 'package:barcode_widget/barcode_widget.dart' as BC;
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
+import '../../data/services/audio_service.dart';
 import '../global/app_colors.dart';
 import '../global/app_text_style.dart';
 import '../global/utils/dimens.dart';
@@ -64,6 +64,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
                             child: MobileScanner(
                               controller: _controller,
                               onDetect: (barcodes) async {
+                                AudioService.playAudio(AudioNames.scanned);
                                 if (widget.isAddingItem) {
                                   await _controller.stop();
                                   barcode = barcodes.barcodes.first;
