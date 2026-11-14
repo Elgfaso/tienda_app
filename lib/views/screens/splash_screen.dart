@@ -7,7 +7,6 @@ import '../../data/services/http_service.dart';
 import '../../data/services/item_service.dart';
 import '../global/app_colors.dart';
 import '../global/app_text_style.dart';
-import '../global/widgets/local_text_animation.dart';
 import '../routes/routes.dart';
 
 class SplashScreen extends StatefulWidget {

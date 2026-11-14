@@ -71,6 +71,7 @@ class LocalTextInputField extends StatelessWidget {
               color: AppColors.hintTextColor,
               fontSize: 18,
             ),
+            errorStyle: AppTextStyle.label(fontSize: 14,color: AppColors.errorColor,fontWeight: FontWeight.bold),
             //BORDES
             border: OutlineInputBorder(
               borderSide: BorderSide(color: AppColors.textColor, width: 1),

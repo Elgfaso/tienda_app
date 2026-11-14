@@ -1,17 +1,9 @@
-import 'dart:convert';
 import 'dart:io';
 
-import 'package:collection/collection.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile_scanner/mobile_scanner.dart' as ms;
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
 
-import '../../config/app_info.dart';
 import '../../config/locator.dart';
 import '../../data/models/item.dart';
-import '../../data/services/dialog_service.dart';
 import '../../data/services/item_service.dart';
 import '../global/app_colors.dart';
 import '../global/app_text_style.dart';
@@ -111,7 +103,7 @@ class _HomeSectionScreenState extends State<HomeSectionScreen> {
               )
             : Expanded(
                 child: RefreshIndicator.adaptive(
-                  onRefresh: () async{
+                  onRefresh: () async {
                     await _getItems();
                   },
                   color: AppColors.primaryColor,
@@ -210,16 +202,16 @@ class _HomeSectionScreenState extends State<HomeSectionScreen> {
   }
 
   void _searchItem() {
-    _items = List.from(
-      _itemsOrigin.where((item) {
-        if (_searchController.text.isNotEmpty) {
-          return item.name.toLowerCase().startsWith(
-            _searchController.text.toLowerCase().trim(),
-          );
-        }
-        return true;
-      }),
-    );
+    final query = _searchController.text.toLowerCase().trim();
+    if (query.isEmpty) {
+      _items = List.from(_itemsOrigin);
+    } else {
+      _items = _itemsOrigin.where(
+        (item) {
+          return item.name.toLowerCase().contains(query);
+        },
+      ).toList();
+    }
   }
 
   void _showModalBottom<T>(

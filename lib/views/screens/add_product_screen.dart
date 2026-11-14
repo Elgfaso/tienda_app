@@ -29,16 +29,18 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _barcodeController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
+  //final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   File? _image;
   String? _previusImg;
 
-  bool _isLoading = false;
   bool _isEdit = false;
+
+  List<Item> _originList = [];
   @override
   void initState() {
     super.initState();
+    _originList = List.from(locator<ItemService>().items);
     if (widget.item != null) {
       _nameController.text = widget.item!.name;
       _priceController.text = widget.item!.price;
@@ -109,19 +111,19 @@ class _AddProductScreenState extends State<AddProductScreen> {
                             if (value == null || value.isEmpty) {
                               return 'Introduzca el precio';
                             }
-                
+
                             final number = double.tryParse(value);
                             if (number == null) {
                               return 'El precio debe ser un número';
                             }
-                            if(number == 0){
+                            if (number == 0) {
                               return 'El precio no puede ser cero';
                             }
                             return null;
                           },
                         ),
                         VerticalSpace.large,
-                
+
                         Text(
                           '*Campos opcionales',
                           style: AppTextStyle.label(fontSize: 20),
@@ -153,7 +155,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                                   context,
                                   Routes.scanner,
                                 );
-                
+
                                 if (result != null && result is Barcode) {
                                   setState(() {
                                     _barcodeController.text =
@@ -167,7 +169,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                                   borderRadius: BorderRadius.circular(10),
                                   color: AppColors.primaryColor,
                                 ),
-                
+
                                 child: Icon(
                                   Icons.barcode_reader,
                                   color: Colors.white,
@@ -181,7 +183,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                         //  controller: _descriptionController,
                         //  label: 'Descripción',
                         //),
-                
+
                         //VerticalSpace.normal,
                         Align(
                           alignment: Alignment.centerLeft,
@@ -299,7 +301,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                                   ),
                                 ),
                               ),
-                
+
                               Positioned(
                                 top: 0,
                                 right: 0,
@@ -354,7 +356,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                                       shape: BoxShape.circle,
                                       //borderRadius: BorderRadius.circular(15)
                                     ),
-                
+
                                     child: Icon(
                                       Icons.remove,
                                       color: AppColors.backgroundColor,
@@ -368,15 +370,37 @@ class _AddProductScreenState extends State<AddProductScreen> {
                     ),
                   ),
                 ),
-                
+
                 LocalButton(
                   _isEdit ? 'Editar' : 'Agregar',
                   onTap: () {
                     if (_formKey.currentState!.validate()) {
-                      if (_isEdit) {
-                        _editItem();
+                      final name = _nameController.text.toLowerCase().trim();
+                      final barcode = _barcodeController.text.trim();
+                      bool nameHasExist = _originList.any(
+                        (item) => item.name.toLowerCase().trim() == name,
+                      );
+                      bool barcodeHasExist = _originList.any(
+                        (item) => item.barcode == barcode,
+                      );
+
+                      if (nameHasExist) {
+                        locator<DialogService>().showAlert(
+                          title: 'Nombre duplicado',
+                          message: 'Ya existe un producto con ese nombre',
+                        );
+                      } else if (barcodeHasExist) {
+                        locator<DialogService>().showAlert(
+                          title: 'Código de barras duplicado',
+                          message:
+                              'Ya existe un producto con ese código de barras',
+                        );
                       } else {
-                        _saveItem();
+                        if (_isEdit) {
+                          _editItem();
+                        } else {
+                          _saveItem();
+                        }
                       }
                     }
                   },
@@ -460,7 +484,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   Future<void> _saveItem() async {
     setState(() {
-      _isLoading = true;
       locator<DialogService>().showLoadingDialog(
         text: 'Agregando producto',
       );
@@ -500,7 +523,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
     });
 
     setState(() {
-      _isLoading = false;
       locator<DialogService>().dismissDialog();
       Navigator.of(context).popUntilWithResult<bool>(
         ModalRoute.withName(Routes.home),
@@ -512,7 +534,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
   Future<void> _editItem() async {
     try {
       setState(() {
-        _isLoading = true;
         locator<DialogService>().showLoadingDialog(
           text: 'Editando producto',
         );
@@ -551,7 +572,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
       });
 
       setState(() {
-        _isLoading = false;
         locator<DialogService>().dismissDialog();
         Navigator.pop(context, [true]);
       });

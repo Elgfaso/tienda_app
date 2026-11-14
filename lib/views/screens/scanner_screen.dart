@@ -1,4 +1,4 @@
-import 'package:barcode_widget/barcode_widget.dart' as BC;
+import 'package:barcode_widget/barcode_widget.dart' as bc;
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
@@ -109,9 +109,9 @@ class _ScannerScreenState extends State<ScannerScreen> {
                             child: SizedBox(
                               width: MediaQuery.of(context).size.width * .8,
                               height: MediaQuery.of(context).size.width * .3,
-                              child: BC.BarcodeWidget(
+                              child: bc.BarcodeWidget(
                                 data: barcode!.rawValue ?? '',
-                                barcode: BC.Barcode.code128(),
+                                barcode: bc.Barcode.code128(),
                                 style: AppTextStyle.label(fontSize: 24),
                                 errorBuilder: (context, error) {
                                   return Text('Error al mostrar el código');

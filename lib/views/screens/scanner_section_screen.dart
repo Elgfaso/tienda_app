@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:barcode_widget/barcode_widget.dart' as BarcodeWidget;
+import 'package:barcode_widget/barcode_widget.dart' as barcode_widget;
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -163,9 +163,9 @@ class _ScannerSectionScreenState extends State<ScannerSectionScreen> {
               child: SizedBox(
                 width: MediaQuery.of(context).size.width * .8,
                 height: MediaQuery.of(context).size.width * .3,
-                child: BarcodeWidget.BarcodeWidget(
+                child: barcode_widget.BarcodeWidget(
                   data: item!.barcode,
-                  barcode: BarcodeWidget.Barcode.code128(),
+                  barcode: barcode_widget.Barcode.code128(),
                   errorBuilder: (context, error) {
                     return Text('Error al mostrar el código');
                   },
@@ -184,7 +184,7 @@ class _ScannerSectionScreenState extends State<ScannerSectionScreen> {
           LocalButton(
             'Ver detalle',
             onTap: () async {
-              final result = await Navigator.pushNamed(
+              await Navigator.pushNamed(
                 context,
                 Routes.detailProduct,
                 arguments: item,
