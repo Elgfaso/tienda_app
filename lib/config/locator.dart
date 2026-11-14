@@ -2,6 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/services/dialog_service.dart';
+import '../data/services/http_service.dart';
 import '../data/services/item_service.dart';
 import '../data/services/shared_preferences_service.dart';
 
@@ -19,4 +20,6 @@ Future<void> setUpLocator() async {
   locator.registerLazySingleton<ItemService>(
     () => ItemService(preferenceService: locator<SharedPreferencesService>()),
   );
+
+  locator.registerLazySingleton<HttpService>(()=>HttpService());
 }
