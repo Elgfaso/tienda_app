@@ -8,7 +8,7 @@ class HttpService {
     try {
       final versionCode = AppInfo.versionCode;
       final url = Uri.parse(
-        'https://raw.githubusercontent.com/Elgfaso/tienda_app/refs/heads/v1.1.0_3/version.json',
+        'https://raw.githubusercontent.com/Elgfaso/tienda_app/refs/heads/master/version.json',
       );
 
       final response = await http.get(url);
