@@ -380,9 +380,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
                       bool nameHasExist = _originList.any(
                         (item) => item.name.toLowerCase().trim() == name,
                       );
-                      bool barcodeHasExist = _originList.any(
-                        (item) => item.barcode == barcode,
-                      );
+                      bool barcodeHasExist = false;
+
+                      if (barcode != '') {
+                        barcodeHasExist = _originList.any(
+                          (item) => item.barcode == barcode,
+                        );
+                      }
 
                       if (nameHasExist) {
                         locator<DialogService>().showAlert(
